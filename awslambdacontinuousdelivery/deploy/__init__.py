@@ -58,18 +58,20 @@ def getDeployResources(t: Template) -> Tuple[ActionTypeID, Role]:
                  , PolicyName = "CloudFormationDeployPolicy"
                  )
   assume = defaultAssumeRolePolicyDocument("cloudformation.amazonaws.com")
-  role = t.add_resource(
-         Role( "CFDeployRole"
+  role = Role( "CFDeployRole"
              , RoleName = Sub("${AWS::StackName}-CFDeployRole")
              , AssumeRolePolicyDocument = assume
              , Policies = [policy]
              )
-      )
+
+  if role.title not in t.resources:
+    role = t.add_resource(role)
   actionId = ActionTypeID( Category = "Deploy"
                          , Owner = "AWS"
                          , Version = "1"
                          , Provider = "CloudFormation"
                          )
+
   return (actionId, role)
 
 
@@ -85,6 +87,7 @@ def getDeploy( t: Template
            }
   params = json.dumps(params)
   params = params.replace('"', '\"').replace('\n', '\\n')
+
   config = { "ActionMode" : "CREATE_UPDATE"
            , "RoleArn" : GetAtt(role, "Arn")
            , "StackName" : Sub("".join(["${AWS::StackName}Functions", stage]))
