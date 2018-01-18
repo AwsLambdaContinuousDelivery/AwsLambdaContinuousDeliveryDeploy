@@ -79,7 +79,8 @@ def getDeploy( t: Template
              , inName: str
              , stage: str
              , interimArt: str #artifact containing func code incl. libs
-             , code: str = None
+             , sourceartifact: str = None
+             , add_tests  = False
              ) -> Stages:
   [actionId, role] = getDeployResources(t)
   params = { "S3Key" : { "Fn::GetArtifactAtt" : [ interimArt, "ObjectKey" ] }
@@ -103,9 +104,9 @@ def getDeploy( t: Template
                      , Configuration = config
                      )
             ]
-  if code is not None:
-    actions.append(getTest(t, code, stage))
+  if sourceartifact is not None and add_tests: 
+    actions.append(getTest(t, sourceartifact, stage))
   return Stages( stage + "Deploy"
-               , Name = stage + "_Deploy"
+               , Name = stage
                , Actions = actions
                )
