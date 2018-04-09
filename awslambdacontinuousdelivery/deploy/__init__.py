@@ -12,14 +12,13 @@ import awacs.s3
 
 from awslambdacontinuousdelivery.tools import alphanum
 from awslambdacontinuousdelivery.tools.iam import defaultAssumeRolePolicyDocument
-from awslambdacontinuousdelivery.python.test import getTest
 
 from troposphere import Template, GetAtt, Ref, Sub
 from troposphere.codepipeline import ( ActionTypeID
   , Actions, Stages, OutputArtifacts, InputArtifacts )
 from troposphere.iam import Role, Policy
 
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 import re
 import json
 
@@ -80,7 +79,7 @@ def getDeploy( t: Template
              , stage: str
              , interimArt: str #artifact containing func code incl. libs
              , sourceartifact: str = None
-             , add_tests  = False
+             , getTest: Callable[[Template, str, str], Action] = None
              ) -> Stages:
   [actionId, role] = getDeployResources(t)
   params = { "S3Key" : { "Fn::GetArtifactAtt" : [ interimArt, "ObjectKey" ] }
@@ -104,7 +103,7 @@ def getDeploy( t: Template
                      , Configuration = config
                      )
             ]
-  if sourceartifact is not None and add_tests: 
+  if sourceartifact is not None and getTest is not None:
     actions.append(getTest(t, sourceartifact, stage))
   return Stages( stage + "Deploy"
                , Name = stage
