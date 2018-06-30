@@ -14,7 +14,7 @@ from awslambdacontinuousdelivery.tools import alphanum
 from awslambdacontinuousdelivery.tools.iam import defaultAssumeRolePolicyDocument
 
 from troposphere import Template, GetAtt, Ref, Sub
-from troposphere.codepipeline import ( ActionTypeID
+from troposphere.codepipeline import ( ActionTypeId
   , Actions, Stages, OutputArtifacts, InputArtifacts )
 from troposphere.iam import Role, Policy
 
@@ -23,7 +23,7 @@ import re
 import json
 
 
-def getDeployResources(t: Template) -> Tuple[ActionTypeID, Role]:
+def getDeployResources(t: Template) -> Tuple[ActionTypeId, Role]:
   statements = [
       awacs.aws.Statement(
           Action = [ awacs.ec2.Action("*")
@@ -65,7 +65,7 @@ def getDeployResources(t: Template) -> Tuple[ActionTypeID, Role]:
 
   if role.title not in t.resources:
     role = t.add_resource(role)
-  actionId = ActionTypeID( Category = "Deploy"
+  actionId = ActionTypeId( Category = "Deploy"
                          , Owner = "AWS"
                          , Version = "1"
                          , Provider = "CloudFormation"

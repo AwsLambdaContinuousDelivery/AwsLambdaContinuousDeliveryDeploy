@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup( name='AwsLambdaContinuousDeliveryDeploy'
-     , version = '0.0.1'
+     , version = '0.0.2'
      , description = 'AwsLambdaContinuousDeliveryDeploy'
      , author = 'Janos Potecki'
      , url = 'https://github.com/AwsLambdaContinuousDelivery/AwsLambdaContinuousDeliveryDeploy'
